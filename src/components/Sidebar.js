@@ -7,16 +7,18 @@ import {
     Drawer,
     IconButton,
     Box,
+    Divider,
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { Group, EuroSymbol, MoneyTwoTone } from '@mui/icons-material';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-
 import ExitToApp from '@mui/icons-material/ExitToApp';
+import BusinessIcon from '@mui/icons-material/Business';
+import CloseIcon from '@mui/icons-material/Close';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../features/authSlice';
-import CloseIcon from '@mui/icons-material/Close';
 import logo from '../assets/logo.png';
 
 const Sidebar = ({ open, onClose }) => {
@@ -29,8 +31,7 @@ const Sidebar = ({ open, onClose }) => {
 
     const handleNavigation = (path) => {
         navigate(path); // Navigate to the new path using react-router
-        // Commented out to keep sidebar open
-        // onClose(); // If you want to close it, leave this line uncommented
+        // onClose(); // If you want to close it, uncomment this line
     };
 
     const handleLogout = () => {
@@ -44,51 +45,17 @@ const Sidebar = ({ open, onClose }) => {
             variant="persistent"
             anchor="left"
             open={open}
-            sx={
-                open
-                    ? {
-                          width: 240,
-                          '& .MuiDrawer-paper': {
-                              width: 240,
-                              boxSizing: 'border-box',
-                          },
-                      }
-                    : ''
-            }
+            sx={{
+                width: open ? 240 : 0,
+                '& .MuiDrawer-paper': {
+                    width: open ? 240 : 0,
+                    boxSizing: 'border-box',
+                    transition: 'width 0.3s',
+                },
+            }}
         >
             <img src={logo} alt="Logo" height={240} width={240} />
-            <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="flex-start"
-                p={2}
-            ></Box>
             <List>
-                {/* <ListItem
-                    onClick={() => handleNavigation('/dashboard')}
-                    selected={selectedItem === '/dashboard'}
-                    sx={{
-                        cursor: 'pointer',
-                        '&:hover': {
-                            fontWeight: 'bold',
-                            backgroundColor: '#f0f0f0',
-                        },
-                    }}
-                >
-                     <ListItemIcon>
-                        <DashboardIcon />
-                    </ListItemIcon> 
-                     <ListItemText
-                        primary="Dashboard"
-                        style={{
-                            fontWeight:
-                                selectedItem === '/dashboard'
-                                    ? 'bold'
-                                    : 'normal',
-                        }}
-                    /> 
-                </ListItem> */}
-
                 <ListItem
                     onClick={() => handleNavigation('/userManagement')}
                     selected={selectedItem === '/userManagement'}
@@ -99,7 +66,7 @@ const Sidebar = ({ open, onClose }) => {
                             backgroundColor: '#f0f0f0',
                             borderRight: 'solid 10px #1976D2',
                         },
-                    }} // Change cursor to pointer
+                    }}
                 >
                     <ListItemIcon>
                         <Group />
@@ -115,6 +82,31 @@ const Sidebar = ({ open, onClose }) => {
                     />
                 </ListItem>
                 <ListItem
+                    onClick={() => handleNavigation('/companyManagement')}
+                    selected={selectedItem === '/companyManagement'}
+                    sx={{
+                        cursor: 'pointer',
+                        '&:hover': {
+                            fontWeight: 'bold',
+                            backgroundColor: '#f0f0f0',
+                            borderRight: 'solid 10px #1976D2',
+                        },
+                    }}
+                >
+                    <ListItemIcon>
+                        <BusinessIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary="Company"
+                        style={{
+                            fontWeight:
+                                selectedItem === '/companyManagement'
+                                    ? 'bold'
+                                    : 'normal',
+                        }}
+                    />
+                </ListItem>
+                <ListItem
                     onClick={() => handleNavigation('/symbolManagement')}
                     selected={selectedItem === '/symbolManagement'}
                     sx={{
@@ -124,7 +116,7 @@ const Sidebar = ({ open, onClose }) => {
                             backgroundColor: '#f0f0f0',
                             borderRight: 'solid 10px #1976D2',
                         },
-                    }} // Change cursor to pointer
+                    }}
                 >
                     <ListItemIcon>
                         <EuroSymbol />
@@ -149,7 +141,7 @@ const Sidebar = ({ open, onClose }) => {
                             backgroundColor: '#f0f0f0',
                             borderRight: 'solid 10px #1976D2',
                         },
-                    }} // Change cursor to pointer
+                    }}
                 >
                     <ListItemIcon>
                         <MoneyTwoTone />
@@ -174,14 +166,31 @@ const Sidebar = ({ open, onClose }) => {
                             backgroundColor: '#f0f0f0',
                             borderRight: 'solid 10px #1976D2',
                         },
-                    }} // Change cursor to pointer
+                    }}
                 >
                     <ListItemIcon>
                         <TrendingUpIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Symbol Aseets" />
+                    <ListItemText primary="Symbol Assets" />
                 </ListItem>
-
+                <ListItem
+                    onClick={() => handleNavigation('/commission')}
+                    selected={selectedItem === '/symbolAssets'}
+                    sx={{
+                        cursor: 'pointer',
+                        '&:hover': {
+                            fontWeight: 'bold',
+                            backgroundColor: '#f0f0f0',
+                            borderRight: 'solid 10px #1976D2',
+                        },
+                    }}
+                >
+                    <ListItemIcon>
+                        <TrendingUpIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Commission" />
+                </ListItem>
+                <Divider />
                 <ListItem
                     onClick={handleLogout}
                     sx={{
@@ -191,14 +200,29 @@ const Sidebar = ({ open, onClose }) => {
                             backgroundColor: '#f0f0f0',
                             borderRight: 'solid 10px #1976D2',
                         },
-                    }} // Change cursor to pointer
+                    }}
                 >
                     <ListItemIcon>
                         <ExitToApp />
                     </ListItemIcon>
-                    <ListItemText primary="LogOut" />
+                    <ListItemText primary="Log Out" />
                 </ListItem>
             </List>
+            <Box
+                sx={{
+                    position: 'absolute',
+                    bottom: 0,
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    p: 2,
+                }}
+            >
+                <IconButton onClick={onClose}>
+                    <MenuIcon />
+                </IconButton>
+            </Box>
         </Drawer>
     );
 };

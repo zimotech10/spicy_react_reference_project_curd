@@ -235,9 +235,6 @@ const SymbolManagement = ({ openSidebar }) => {
                                     <TableCell style={{ color: '#fff' }}>
                                         Code
                                     </TableCell>
-                                    <TableCell style={{ color: '#fff' }}>
-                                        Commission
-                                    </TableCell>
 
                                     <TableCell style={{ color: '#fff' }}>
                                         AssetName
@@ -256,10 +253,6 @@ const SymbolManagement = ({ openSidebar }) => {
                                         <TableCell>{symbol.name}</TableCell>
                                         <TableCell>{symbol.type}</TableCell>
                                         <TableCell>{symbol.code}</TableCell>
-                                        <TableCell>
-                                            {symbol.commission}
-                                        </TableCell>
-
                                         <TableCell>
                                             {symbol.assetName}
                                         </TableCell>
@@ -351,24 +344,6 @@ const SymbolManagement = ({ openSidebar }) => {
                         value={newSymbol.code}
                         onChange={(e) =>
                             setNewSymbol({ ...newSymbol, code: e.target.value })
-                        }
-                        error={!!errors.email}
-                        helperText={errors.email}
-                        required
-                    />
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="Commission"
-                        type="number"
-                        fullWidth
-                        variant="outlined"
-                        value={newSymbol.commission}
-                        onChange={(e) =>
-                            setNewSymbol({
-                                ...newSymbol,
-                                commission: e.target.value,
-                            })
                         }
                         error={!!errors.email}
                         helperText={errors.email}
@@ -480,23 +455,7 @@ const SymbolManagement = ({ openSidebar }) => {
                                 helperText={errors.email}
                                 required
                             />
-                            <TextField
-                                margin="dense"
-                                label="Commission"
-                                type="number"
-                                fullWidth
-                                variant="outlined"
-                                value={selectedSymbol.commission}
-                                onChange={(e) =>
-                                    setSelectedSymbol({
-                                        ...selectedSymbol,
-                                        commission: e.target.value,
-                                    })
-                                }
-                                error={!!errors.email}
-                                helperText={errors.email}
-                                required
-                            />
+
                             <Select
                                 fullWidth
                                 value={selectedSymbol.assetName}

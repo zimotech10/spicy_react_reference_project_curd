@@ -37,8 +37,11 @@ import AddIcon from '@mui/icons-material/Add';
 const UserManagement = ({ openSidebar }) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+
     const token = localStorage.getItem('adminTrade');
     const [accounts, setAccounts] = useState([]);
+    const [companyEmails, setCompanyEmail] = useState([]);
+
     const [selectedAllow, setSelectedAllow] = useState({});
 
     // Modal States
@@ -47,11 +50,12 @@ const UserManagement = ({ openSidebar }) => {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState({ allow: 'Block' });
     const [newUser, setNewUser] = useState({
+        companyEmail: '',
         email: '',
-        userName: '',
+        name: '',
         balance: '',
         leverage: '',
-        margin: '',
+        usedMargin: '',
         server: '',
     });
     const [errors, setErrors] = useState({});
@@ -121,6 +125,15 @@ const UserManagement = ({ openSidebar }) => {
                 })
                 .then((res) => {
                     fetchAccounts();
+                    setNewUser({
+                        companyEmail: '',
+                        email: '',
+                        name: '',
+                        balance: '',
+                        leverage: '',
+                        usedMargin: '',
+                        server: '',
+                    });
                 })
                 .catch((error) => {});
             setOpenCreateModal(false);
@@ -236,6 +249,14 @@ const UserManagement = ({ openSidebar }) => {
                                             textAlign: 'center',
                                         }}
                                     >
+                                        CompanyEmail
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color: '#fff',
+                                            textAlign: 'center',
+                                        }}
+                                    >
                                         Email
                                     </TableCell>
                                     <TableCell
@@ -244,7 +265,7 @@ const UserManagement = ({ openSidebar }) => {
                                             textAlign: 'center',
                                         }}
                                     >
-                                        UserName
+                                        Name
                                     </TableCell>
                                     <TableCell
                                         style={{
@@ -293,14 +314,6 @@ const UserManagement = ({ openSidebar }) => {
                                             textAlign: 'center',
                                         }}
                                     >
-                                        Server
-                                    </TableCell>
-                                    <TableCell
-                                        style={{
-                                            color: '#fff',
-                                            textAlign: 'center',
-                                        }}
-                                    >
                                         CreatedAt
                                     </TableCell>
                                     <TableCell
@@ -327,12 +340,17 @@ const UserManagement = ({ openSidebar }) => {
                                         <TableCell
                                             style={{ textAlign: 'center' }}
                                         >
+                                            {account.companyEmail}
+                                        </TableCell>
+                                        <TableCell
+                                            style={{ textAlign: 'center' }}
+                                        >
                                             {account.email}
                                         </TableCell>
                                         <TableCell
                                             style={{ textAlign: 'center' }}
                                         >
-                                            {account.userName}
+                                            {account.name}
                                         </TableCell>
                                         <TableCell
                                             style={{ textAlign: 'center' }}
@@ -347,7 +365,7 @@ const UserManagement = ({ openSidebar }) => {
                                         <TableCell
                                             style={{ textAlign: 'center' }}
                                         >
-                                            {account.margin}
+                                            {account.usedMargin}
                                         </TableCell>
                                         <TableCell
                                             style={{ textAlign: 'center' }}
@@ -360,11 +378,6 @@ const UserManagement = ({ openSidebar }) => {
                                             {account.leverage}
                                         </TableCell>
 
-                                        <TableCell
-                                            style={{ textAlign: 'center' }}
-                                        >
-                                            {account.server}
-                                        </TableCell>
                                         <TableCell
                                             style={{ textAlign: 'center' }}
                                         >
@@ -412,6 +425,31 @@ const UserManagement = ({ openSidebar }) => {
             >
                 <DialogTitle>Create User</DialogTitle>
                 <DialogContent>
+                    <Select
+                        labelId="companyEmail"
+                        fullWidth
+                        value={newUser.companyEmail}
+                        onChange={(e) => {
+                            setNewUser({
+                                ...newUser,
+                                companyEmail: e.target.value,
+                            });
+                        }}
+                        input={<OutlinedInput label="" />}
+                    >
+                        <MenuItem value="">
+                            <span>Select company email.</span>
+                        </MenuItem>
+                        {companyEmails &&
+                            companyEmails.map((email, index) => {
+                                return (
+                                    <MenuItem key={index} value={email}>
+                                        {email}
+                                    </MenuItem>
+                                );
+                            })}
+                    </Select>
+
                     <TextField
                         autoFocus
                         margin="dense"
@@ -488,24 +526,20 @@ const UserManagement = ({ openSidebar }) => {
                             setNewUser({ ...newUser, margin: e.target.value })
                         }
                     />
-
-                    <TextField
-                        margin="dense"
-                        label="Server"
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        value={newUser.server}
-                        onChange={(e) =>
-                            setNewUser({ ...newUser, server: e.target.value })
-                        }
-                        error={!!errors.server}
-                        helperText={errors.server}
-                    />
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClick={() => setOpenCreateModal(false)}
+                        onClick={() => {
+                            setOpenCreateModal(false);
+                            setNewUser({
+                                companyName: '',
+                                email: '',
+                                userName: '',
+                                balance: '',
+                                leverage: '',
+                                usdedMargin: '',
+                            });
+                        }}
                         color="secondary"
                     >
                         Cancel
@@ -525,6 +559,22 @@ const UserManagement = ({ openSidebar }) => {
                 <DialogContent>
                     {selectedUser && (
                         <>
+                            <Select
+                                fullWidth
+                                value={selectedUser.companyName}
+                                onChange={(e) => {
+                                    setSelectedUser({
+                                        ...selectedUser,
+                                        companyName: e.target.value,
+                                    });
+                                }}
+                            >
+                                {companyEmails.map((email, index) => (
+                                    <MenuItem key={index} value={email}>
+                                        {email}
+                                    </MenuItem>
+                                ))}
+                            </Select>
                             <TextField
                                 autoFocus
                                 margin="dense"

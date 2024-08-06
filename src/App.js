@@ -4,7 +4,9 @@ import Dashboard from './components/Dashboard';
 import UserManagement from './components/UserManagement';
 import SymbolManagement from './components/SymbolManagement';
 import PositionManagement from './components/PositionManagement';
+import Commissions from './components/Commission';
 import SymbolAssets from './components/SymbolAssets';
+import Company from './components/Company';
 import ProtectedRoute from './components/ProtectedRoute';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
@@ -119,10 +121,26 @@ const App = () => {
                                         }
                                     />
                                     <Route
+                                        path="/companyManagement"
+                                        element={
+                                            <ProtectedRoute>
+                                                <Company />
+                                            </ProtectedRoute>
+                                        }
+                                    />
+                                    <Route
                                         path="/symbolAssets"
                                         element={
                                             <ProtectedRoute>
                                                 <SymbolAssets />
+                                            </ProtectedRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/commission"
+                                        element={
+                                            <ProtectedRoute>
+                                                <Commissions />
                                             </ProtectedRoute>
                                         }
                                     />

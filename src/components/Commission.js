@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import config from './config';
 import { useNavigate } from 'react-router-dom';
+
 import {
     Container,
     Typography,
@@ -11,41 +12,49 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Button,
     Paper,
     Box,
     CircularProgress,
+    Snackbar,
+    Alert,
 } from '@mui/material';
 
-const PositionManagement = ({ openSidebar }) => {
+const Commissions = ({ openSidebar }) => {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const token = localStorage.getItem('adminTrade');
-    const [positions, setPosition] = useState([]);
+    const [symbols, setSymbol] = useState([]);
+
+    // Modal States
+    const [errors, setErrors] = useState({});
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
     useEffect(() => {
         if (!token) {
-            setLoading(true);
             navigate('/login');
         } else {
-            fetchAccounts();
+            fetchSymbols();
         }
-        setLoading(false);
-    }, [token, navigate]);
+    }, [token]);
 
-    const fetchAccounts = async () => {
-        await axios
-            .get(`${config.BackendEndpoint}/getPositions`, {
-                headers: {
-                    Authorization: token ? token : '',
-                },
-            })
-            .then((res) => {
-                setPosition(res.data.positions);
-            })
-            .catch((err) => {
-                console.log('Error fetching accounts', err);
-            });
+    const fetchSymbols = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.get(
+                `${config.BackendEndpoint}/getCommissions`,
+                {
+                    headers: {
+                        Authorization: token ? token : '',
+                    },
+                }
+            );
+            setSymbol(res.data.commissions);
+        } catch (err) {
+            console.log('Error fetching company', err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const formatDate = (timestamp) => {
@@ -53,23 +62,33 @@ const PositionManagement = ({ openSidebar }) => {
         return date.toISOString().split('T')[0];
     };
 
+    const validate = () => {
+        // Validation logic...
+        return true;
+    };
+
     return (
         <Container
             style={{ marginTop: '30px', width: '100%', textAlign: 'center' }}
         >
-            <Box flexGrow={1}>
+            <Box
+                flexGrow={1}
+                display="flex"
+                flexDirection="column"
+                alignItems="flex-start"
+            >
                 <Typography
                     variant="h4"
                     style={{
-                        marginLeft: '10%',
+                        marginLeft: '20vw',
                         color: 'white',
                         fontFamily: 'nycd',
                         fontWeight: '1000',
-                        marginBottom: '20px',
                     }}
                 >
-                    Position Management
+                    Commissions
                 </Typography>
+
                 {loading ? (
                     <Box
                         display="flex"
@@ -80,7 +99,7 @@ const PositionManagement = ({ openSidebar }) => {
                         <CircularProgress />
                     </Box>
                 ) : (
-                    <TableContainer component={Paper} style={{ width: '110%' }}>
+                    <TableContainer component={Paper} style={{ width: '100%' }}>
                         <Table style={{ backgroundColor: '#f5f5f5' }}>
                             <TableHead>
                                 <TableRow
@@ -90,98 +109,96 @@ const PositionManagement = ({ openSidebar }) => {
                                     }}
                                 >
                                     <TableCell style={{ color: '#fff' }}>
-                                        UserID
+                                        CompanyEmail
                                     </TableCell>
                                     <TableCell style={{ color: '#fff' }}>
-                                        Type
+                                        Major
                                     </TableCell>
                                     <TableCell style={{ color: '#fff' }}>
-                                        Size
+                                        JPY pairs
                                     </TableCell>
                                     <TableCell style={{ color: '#fff' }}>
-                                        SymbolName
+                                        Indices
                                     </TableCell>
                                     <TableCell style={{ color: '#fff' }}>
-                                        Status
+                                        Metal
                                     </TableCell>
                                     <TableCell style={{ color: '#fff' }}>
-                                        StartPrice
+                                        Oil
                                     </TableCell>
                                     <TableCell style={{ color: '#fff' }}>
-                                        StopPrice
-                                    </TableCell>
-                                    <TableCell style={{ color: '#fff' }}>
-                                        StopLoss
-                                    </TableCell>
-                                    <TableCell style={{ color: '#fff' }}>
-                                        TakeProfit
-                                    </TableCell>
-                                    <TableCell style={{ color: '#fff' }}>
-                                        Commission
-                                    </TableCell>
-                                    <TableCell style={{ color: '#fff' }}>
-                                        RealProfit
-                                    </TableCell>
-                                    <TableCell style={{ color: '#fff' }}>
-                                        CloseReason
+                                        BTC/USD
                                     </TableCell>
                                     <TableCell style={{ color: '#fff' }}>
                                         CreatedAt
                                     </TableCell>
+                                    <TableCell style={{ color: '#fff' }}>
+                                        UpdateAt
+                                    </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {positions &&
-                                    positions.map((position) => (
-                                        <TableRow key={position.id}>
+                                {symbols.length > 0 ? (
+                                    symbols.map((symbol) => (
+                                        <TableRow key={symbol.id}>
                                             <TableCell>
-                                                {position.userID}
+                                                {symbol.companyEmail}
                                             </TableCell>
                                             <TableCell>
-                                                {position.type}
+                                                {symbol.Major}
                                             </TableCell>
                                             <TableCell>
-                                                {position.size}
+                                                {symbol.JPYpairs}
                                             </TableCell>
                                             <TableCell>
-                                                {position.symbol}
+                                                {symbol.Indices}
                                             </TableCell>
                                             <TableCell>
-                                                {position.status}
+                                                {symbol.Metal}
+                                            </TableCell>
+                                            <TableCell>{symbol.Oil}</TableCell>
+                                            <TableCell>
+                                                {symbol.BTCUSD}
                                             </TableCell>
                                             <TableCell>
-                                                {position.startPrice}
+                                                {formatDate(symbol.createdAt)}
                                             </TableCell>
                                             <TableCell>
-                                                {position.stopPrice}
-                                            </TableCell>
-                                            <TableCell>
-                                                {position.stopLoss}
-                                            </TableCell>
-                                            <TableCell>
-                                                {position.takeProfit}
-                                            </TableCell>
-                                            <TableCell>
-                                                {position.commission}
-                                            </TableCell>
-                                            <TableCell>
-                                                {position.realProfit}
-                                            </TableCell>
-                                            <TableCell>
-                                                {position.closeReason}
-                                            </TableCell>
-                                            <TableCell>
-                                                {formatDate(position.createdAt)}
+                                                {formatDate(symbol.updatedAt)}
                                             </TableCell>
                                         </TableRow>
-                                    ))}
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={5}
+                                            style={{ textAlign: 'center' }}
+                                        >
+                                            No symbols found.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
                             </TableBody>
                         </Table>
                     </TableContainer>
                 )}
             </Box>
+
+            {/* Snackbar */}
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={() => setSnackbarOpen(false)}
+            >
+                <Alert
+                    onClose={() => setSnackbarOpen(false)}
+                    severity="success"
+                >
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };
 
-export default PositionManagement;
+export default Commissions;
